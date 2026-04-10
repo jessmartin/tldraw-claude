@@ -10,45 +10,64 @@ Claude Code ←stdio→ MCP Server ←WebSocket→ tldraw widget (browser)
 
 Claude manipulates shapes on a tldraw canvas running in your browser. You both see the same canvas — Claude draws, you can edit, and vice versa.
 
-## Quick start
+## Install
+
+### Option A: Clone (recommended — easy to update)
 
 ```bash
-git clone https://github.com/sociotechnica-org/tldraw-claude.git
-cd tldraw-claude
+git clone https://github.com/sociotechnica-org/tldraw-claude.git ~/.tldraw-claude
+cd ~/.tldraw-claude
 ./setup
 ```
 
-### 1. Start the canvas
+### Option B: Install anywhere
 
 ```bash
-./bin/tldraw-claude start
+git clone https://github.com/sociotechnica-org/tldraw-claude.git /path/to/tldraw-claude
+cd /path/to/tldraw-claude
+./setup
 ```
 
-This starts the tldraw widget (http://localhost:5173) and a WebSocket relay (ws://localhost:4000), then opens your browser.
+### Prerequisites
 
-### 2. Configure Claude Code
+- [Bun](https://bun.sh) runtime
+- [Claude Code](https://claude.ai/code) CLI
 
-Add the MCP server to your project's `.claude/settings.json`:
+### Configure Claude Code
+
+Add the MCP server to your project's `.mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "tldraw": {
       "command": "bun",
-      "args": ["run", "/path/to/tldraw-claude/src/mcp-server.ts"]
+      "args": ["/path/to/tldraw-claude/src/mcp-server.ts"]
     }
   }
 }
 ```
 
-Or install as a Claude Code plugin:
+Replace `/path/to/tldraw-claude` with the actual install path (e.g., `~/.tldraw-claude`).
+
+Or register as a Claude Code plugin:
 
 ```bash
 claude plugin marketplace add /path/to/tldraw-claude --scope project
 claude plugin install tldraw-claude@sociotechnica --scope project
 ```
 
-### 3. Draw together
+## Usage
+
+### 1. Start the canvas
+
+```bash
+~/.tldraw-claude/bin/tldraw-claude start
+```
+
+This starts the tldraw widget (http://localhost:5173) and a WebSocket relay (ws://localhost:4000), then opens your browser.
+
+### 2. Draw together
 
 Ask Claude to draw something:
 
@@ -57,6 +76,23 @@ Ask Claude to draw something:
 > "Sketch the architecture of our microservices"
 
 > "Create a diagram of the database schema"
+
+## Updating
+
+Since tldraw-claude is installed via git clone, updating is a pull:
+
+```bash
+cd ~/.tldraw-claude   # or wherever you cloned it
+git pull
+./setup               # reinstall deps if they changed
+```
+
+To pin a specific version:
+
+```bash
+git checkout v0.1.0
+./setup
+```
 
 ## Tools
 
@@ -72,9 +108,9 @@ Ask Claude to draw something:
 ## CLI
 
 ```bash
-./bin/tldraw-claude start    # Start widget + WS relay
-./bin/tldraw-claude stop     # Stop background processes
-./bin/tldraw-claude status   # Check if services are running
+tldraw-claude start    # Start widget + WS relay
+tldraw-claude stop     # Stop background processes
+tldraw-claude status   # Check if services are running
 ```
 
 ## License
