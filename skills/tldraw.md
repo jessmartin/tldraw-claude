@@ -7,10 +7,15 @@ description: Draw on a shared tldraw canvas with the user. Create diagrams, flow
 
 You have access to a shared tldraw canvas that the user can see in their browser. Use the MCP tools to create and manipulate shapes on the canvas.
 
+## Important: this is a shared canvas
+
+The canvas belongs to the user. They may have drawn things on it that matter to them. **Never delete shapes or clear the canvas without asking first.** Always confirm before using `delete_shapes` or `clear_canvas` — even if you think you're "starting fresh." The user's work on the canvas is just as real as their code.
+
 ## Before drawing
 
 1. Make sure the tldraw widget is running. If the user hasn't started it, tell them to run: `tldraw-claude start`
 2. Use `get_snapshot` to see what's already on the canvas before making changes.
+3. If you need a clean canvas, **ask the user** before clearing.
 
 ## Available tools
 
@@ -34,7 +39,7 @@ You have access to a shared tldraw canvas that the user can see in their browser
 ## Workflow
 
 1. `get_snapshot` — understand current state
-2. `clear_canvas` if starting fresh (ask user first)
+2. If the canvas has existing work, draw alongside it (offset your shapes) rather than clearing
 3. Create shapes with meaningful positions and labels
 4. Connect related shapes with arrows
 5. `get_snapshot` to verify the result looks right
