@@ -1,16 +1,20 @@
 # tldraw-claude
 
-![tldraw-claude — drawing together on a shared canvas](docs/hero.png)
+A Claude Code plugin that gives Claude a shared [tldraw](https://tldraw.dev) canvas.
 
-A Claude Code plugin that gives Claude a shared [tldraw](https://tldraw.dev) canvas. Draw diagrams, flowcharts, and sketches together in real time.
+## What does it do?
+
+You and Claude draw on the same canvas. You open a tldraw board in your browser, Claude gets tools to create shapes, connect them with arrows, and read what's on the canvas. You can both add and edit — it's a live, shared whiteboard.
+
+Great for sketching architecture diagrams, flowcharts, database schemas, or just thinking visually together.
+
+![tldraw-claude — drawing together on a shared canvas](docs/hero.png)
 
 ## How it works
 
 ```
 Claude Code ←stdio→ MCP Server ←WebSocket→ tldraw widget (browser)
 ```
-
-Claude manipulates shapes on a tldraw canvas running in your browser. You both see the same canvas — Claude draws, you can edit, and vice versa.
 
 ## Install
 
