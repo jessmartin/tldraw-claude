@@ -25,8 +25,18 @@ function plainTextFromRichText(rt: unknown): string | undefined {
 function App() {
 	const editorRef = useRef<Editor | null>(null)
 	const wsRef = useRef<WebSocket | null>(null)
+	const handledRequests = useRef<Set<string>>(new Set())
 
 	const handleMessage = useCallback((data: WsRequest) => {
+		// Deduplicate: ignore requests we've already handled
+		if (handledRequests.current.has(data.requestId)) return
+		handledRequests.current.add(data.requestId)
+		// Keep the set from growing forever
+		if (handledRequests.current.size > 1000) {
+			const entries = [...handledRequests.current]
+			handledRequests.current = new Set(entries.slice(-500))
+		}
+
 		const editor = editorRef.current
 		if (!editor) return respond(data.requestId, { error: 'Editor not ready' })
 
@@ -234,7 +244,10 @@ function App() {
 			ws = new WebSocket(`ws://localhost:${WS_PORT}`)
 			wsRef.current = ws
 
-			ws.onopen = () => console.log('[tldraw] Connected to MCP bridge')
+			ws.onopen = () => {
+				console.log('[tldraw] Connected to relay')
+				ws.send(JSON.stringify({ type: 'register', role: 'widget' }))
+			}
 			ws.onclose = () => {
 				console.log('[tldraw] Disconnected, reconnecting in 2s...')
 				reconnectTimer = window.setTimeout(connect, 2000)
