@@ -1,5 +1,7 @@
 # tldraw-claude
 
+![tldraw-claude — drawing together on a shared canvas](docs/hero.png)
+
 A Claude Code plugin that gives Claude a shared [tldraw](https://tldraw.dev) canvas. Draw diagrams, flowcharts, and sketches together in real time.
 
 ## How it works
