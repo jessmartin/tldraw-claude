@@ -1,0 +1,11 @@
+{
+  "name": "sociotechnica",
+  "plugins": [
+    {
+      "name": "tldraw-claude",
+      "description": "Collaborative tldraw canvas for Claude Code",
+      "source": ".",
+      "category": "tools"
+    }
+  ]
+}

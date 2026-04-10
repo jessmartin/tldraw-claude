@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# tldraw-claude — Setup script
+#
+# Installs dependencies and configures the plugin for Claude Code.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+WIDGET_DIR="$SCRIPT_DIR/widget"
+
+info() { echo "  → $1"; }
+success() { echo "  ✓ $1"; }
+error() { echo "  ✗ $1" >&2; }
+
+BUN_CMD="${ALEXANDRIA_BUN_BIN:-${BUN_INSTALL:+$BUN_INSTALL/bin/bun}}"
+BUN_CMD="${BUN_CMD:-bun}"
+
+if ! "$BUN_CMD" --version &>/dev/null 2>&1; then
+	error "Bun is required. Install from https://bun.sh"
+	exit 1
+fi
+
+success "Bun found: $("$BUN_CMD" --version)"
+
+# Install root deps (MCP SDK)
+info "Installing root dependencies..."
+(cd "$SCRIPT_DIR" && "$BUN_CMD" install)
+success "Root dependencies installed"
+
+# Install widget deps
+info "Installing widget dependencies..."
+(cd "$WIDGET_DIR" && "$BUN_CMD" install)
+success "Widget dependencies installed"
+
+echo ""
+echo "Setup complete!"
+echo ""
+echo "To start the canvas:"
+echo "  ./bin/tldraw-claude start"
+echo ""
+echo "To configure Claude Code MCP, add to your .claude/settings.json:"
+echo ""
+echo '  "mcpServers": {'
+echo '    "tldraw": {'
+echo '      "command": "bun",'
+echo "      \"args\": [\"$SCRIPT_DIR/src/mcp-server.ts\"]"
+echo '    }'
+echo '  }'
+echo ""

@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+# tldraw-claude — Start the tldraw canvas and WebSocket relay.
+#
+# Usage:
+#   tldraw-claude start    Start the widget + WS relay (opens browser)
+#   tldraw-claude stop     Stop background processes
+#   tldraw-claude status   Check if services are running
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+WIDGET_DIR="$PLUGIN_ROOT/widget"
+PID_DIR="$PLUGIN_ROOT/.pids"
+
+info() { echo "  → $1"; }
+success() { echo "  ✓ $1"; }
+error() { echo "  ✗ $1" >&2; }
+
+ensure_deps() {
+	if ! command -v bun &>/dev/null; then
+		error "Bun is required. Install from https://bun.sh"
+		exit 1
+	fi
+
+	if [ ! -d "$WIDGET_DIR/node_modules" ]; then
+		info "Installing widget dependencies..."
+		(cd "$WIDGET_DIR" && bun install)
+	fi
+}
+
+cmd_start() {
+	ensure_deps
+	mkdir -p "$PID_DIR"
+
+	# Start WS relay
+	if [ -f "$PID_DIR/ws-relay.pid" ] && kill -0 "$(cat "$PID_DIR/ws-relay.pid")" 2>/dev/null; then
+		info "WS relay already running (pid $(cat "$PID_DIR/ws-relay.pid"))"
+	else
+		info "Starting WebSocket relay on port 4000..."
+		bun "$WIDGET_DIR/ws-server.ts" >"$PID_DIR/ws-relay.log" 2>&1 &
+		echo $! >"$PID_DIR/ws-relay.pid"
+		success "WS relay started (pid $!)"
+	fi
+
+	# Start Vite dev server
+	if [ -f "$PID_DIR/widget.pid" ] && kill -0 "$(cat "$PID_DIR/widget.pid")" 2>/dev/null; then
+		info "Widget already running (pid $(cat "$PID_DIR/widget.pid"))"
+	else
+		info "Starting tldraw widget on http://localhost:5173..."
+		(cd "$WIDGET_DIR" && bun run dev) >"$PID_DIR/widget.log" 2>&1 &
+		echo $! >"$PID_DIR/widget.pid"
+		success "Widget started (pid $!)"
+	fi
+
+	echo ""
+	echo "tldraw canvas ready!"
+	echo "  Canvas:    http://localhost:5173"
+	echo "  WS relay:  ws://localhost:4000"
+	echo ""
+	echo "Open http://localhost:5173 in your browser to see the shared canvas."
+
+	# Try to open browser
+	if command -v open &>/dev/null; then
+		sleep 2
+		open "http://localhost:5173"
+	fi
+}
+
+cmd_stop() {
+	local stopped=false
+
+	for name in ws-relay widget; do
+		local pidfile="$PID_DIR/$name.pid"
+		if [ -f "$pidfile" ]; then
+			local pid
+			pid="$(cat "$pidfile")"
+			if kill -0 "$pid" 2>/dev/null; then
+				kill "$pid" 2>/dev/null || true
+				success "Stopped $name (pid $pid)"
+				stopped=true
+			fi
+			rm -f "$pidfile"
+		fi
+	done
+
+	if [ "$stopped" = false ]; then
+		info "Nothing running."
+	fi
+}
+
+cmd_status() {
+	for name in ws-relay widget; do
+		local pidfile="$PID_DIR/$name.pid"
+		if [ -f "$pidfile" ] && kill -0 "$(cat "$pidfile")" 2>/dev/null; then
+			success "$name running (pid $(cat "$pidfile"))"
+		else
+			info "$name not running"
+		fi
+	done
+}
+
+case "${1:-start}" in
+start) cmd_start ;;
+stop) cmd_stop ;;
+status) cmd_status ;;
+*)
+	echo "Usage: tldraw-claude {start|stop|status}"
+	exit 1
+	;;
+esac
