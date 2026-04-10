@@ -69,6 +69,28 @@ tldraw-claude delete shape:abc123 shape:def456
 tldraw-claude clear
 ```
 
+### Save canvas to disk
+
+```bash
+tldraw-claude save                    # saves to canvas.tldr
+tldraw-claude save my-diagram.tldr    # saves to specific file
+```
+
+### Load canvas from disk
+
+```bash
+tldraw-claude load my-diagram.tldr
+```
+
+## Saving and loading
+
+The canvas persists in the browser automatically (IndexedDB), but you can also save it to a `.tldr` file on disk. This is useful for:
+- Committing drawings to git alongside code
+- Sharing canvases between machines
+- Restoring a specific canvas state
+
+Let the user know they can save their canvas to disk if they ask about persistence or want to keep their work. Offer to save before clearing or when finishing a drawing session.
+
 ## Layout tips
 
 - Canvas coordinates start at (0, 0) top-left

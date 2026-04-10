@@ -198,6 +198,39 @@ async function main() {
 			break
 		}
 
+		case 'save': {
+			const filePath = positionals[0] || 'canvas.tldr'
+			const result = await sendCommand('save_canvas')
+			if (result.error) {
+				console.error(`Error: ${result.error}`)
+				process.exit(1)
+			}
+			await Bun.write(filePath, result.snapshot as string)
+			console.log(`saved to ${filePath}`)
+			break
+		}
+
+		case 'load': {
+			const filePath = positionals[0]
+			if (!filePath) {
+				console.error('Usage: tldraw-claude load <file.tldr>')
+				process.exit(1)
+			}
+			const file = Bun.file(filePath)
+			if (!await file.exists()) {
+				console.error(`File not found: ${filePath}`)
+				process.exit(1)
+			}
+			const snapshot = await file.text()
+			const result = await sendCommand('load_canvas', { snapshot })
+			if (result.error) {
+				console.error(`Error: ${result.error}`)
+				process.exit(1)
+			}
+			console.log(`loaded from ${filePath}`)
+			break
+		}
+
 		case 'help':
 		default:
 			console.log(`tldraw-claude — shared canvas CLI
@@ -212,6 +245,8 @@ Canvas commands:
   connect --from <id> --to <id>     Draw arrow between shapes
           [--label "..."] [--color ...]
   clear                             Clear the canvas
+  save [file.tldr]                  Save canvas to disk (default: canvas.tldr)
+  load <file.tldr>                  Load canvas from disk
 
 Service commands (via bin/tldraw-claude):
   start                             Start widget + WS relay

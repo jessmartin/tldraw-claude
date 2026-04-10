@@ -44,6 +44,10 @@ function App() {
 					return handleGetSnapshot(editor, data)
 				case 'clear_canvas':
 					return handleClearCanvas(editor, data)
+				case 'save_canvas':
+					return handleSaveCanvas(editor, data)
+				case 'load_canvas':
+					return handleLoadCanvas(editor, data)
 				default:
 					return respond(data.requestId, { error: `Unknown command: ${data.type}` })
 			}
@@ -203,6 +207,23 @@ function App() {
 		const ids = [...editor.getCurrentPageShapeIds()]
 		if (ids.length > 0) editor.deleteShapes(ids)
 		respond(data.requestId, { cleared: true })
+	}
+
+	function handleSaveCanvas(editor: Editor, data: WsRequest) {
+		const snapshot = editor.getSnapshot()
+		respond(data.requestId, { snapshot: JSON.stringify(snapshot) })
+	}
+
+	function handleLoadCanvas(editor: Editor, data: WsRequest) {
+		const snapshotJson = data.snapshot as string
+		if (!snapshotJson) return respond(data.requestId, { error: 'Missing snapshot data' })
+		try {
+			const snapshot = JSON.parse(snapshotJson)
+			editor.loadSnapshot(snapshot)
+			respond(data.requestId, { loaded: true })
+		} catch (err) {
+			respond(data.requestId, { error: `Failed to load snapshot: ${err}` })
+		}
 	}
 
 	useEffect(() => {
