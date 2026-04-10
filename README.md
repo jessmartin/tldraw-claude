@@ -89,6 +89,19 @@ git pull
 ./setup
 ```
 
+## Persistence
+
+Your canvas is automatically saved in the browser (IndexedDB) — close the tab, reopen it, everything's still there.
+
+You can also save to disk as a `.tldr` file:
+
+```bash
+tldraw-claude save diagram.tldr    # Save canvas to file
+tldraw-claude load diagram.tldr    # Restore canvas from file
+```
+
+This means you can commit drawings to git, share `.tldr` files with teammates, or restore a canvas on a different machine.
+
 ## CLI
 
 ```bash
@@ -101,6 +114,8 @@ tldraw-claude update --id <id>     # Update a shape
 tldraw-claude delete <id> [id ...] # Delete shapes
 tldraw-claude connect --from --to  # Draw arrow between shapes
 tldraw-claude clear                # Clear the canvas
+tldraw-claude save [file.tldr]     # Save canvas to disk
+tldraw-claude load <file.tldr>     # Load canvas from disk
 tldraw-claude help                 # Show all options
 ```
 
