@@ -34,7 +34,7 @@ register_plugin() {
 		warn "Claude Code CLI not found — skipping plugin registration."
 		warn "Register manually later with:"
 		warn "  claude plugin marketplace add $SCRIPT_DIR --scope user"
-		warn "  claude plugin install tldraw-buddy@sociotechnica --scope user"
+		warn "  claude plugin install tldraw-buddy@jessmartin --scope user"
 		return 0
 	fi
 
@@ -43,13 +43,13 @@ register_plugin() {
 	if ! claude plugin marketplace add "$SCRIPT_DIR" --scope user 2>/dev/null; then
 		warn "Marketplace registration failed — register manually:"
 		warn "  claude plugin marketplace add $SCRIPT_DIR --scope user"
-		warn "  claude plugin install tldraw-buddy@sociotechnica --scope user"
+		warn "  claude plugin install tldraw-buddy@jessmartin --scope user"
 		return 0
 	fi
 
-	if ! claude plugin install "tldraw-buddy@sociotechnica" --scope user 2>/dev/null; then
+	if ! claude plugin install "tldraw-buddy@jessmartin" --scope user 2>/dev/null; then
 		warn "Plugin install failed — install manually:"
-		warn "  claude plugin install tldraw-buddy@sociotechnica --scope user"
+		warn "  claude plugin install tldraw-buddy@jessmartin --scope user"
 		return 0
 	fi
 

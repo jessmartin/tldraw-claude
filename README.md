@@ -40,7 +40,7 @@ tldraw skill so I can draw on a shared canvas with you.
 
 ```bash
 claude plugin marketplace add jessmartin/tldraw-buddy --scope user
-claude plugin install tldraw-buddy@sociotechnica --scope user
+claude plugin install tldraw-buddy@jessmartin --scope user
 ```
 
 ### Option C: Manual install
