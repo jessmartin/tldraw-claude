@@ -2,7 +2,10 @@
   "name": "tldraw-buddy",
   "version": "0.1.0",
   "description": "Collaborative tldraw canvas for Claude Code — draw diagrams, flowcharts, and sketches together",
-  "author": "sociotechnica-org",
+  "author": {
+    "name": "Jess Martin",
+    "url": "https://github.com/jessmartin"
+  },
   "repository": "https://github.com/jessmartin/tldraw-buddy",
   "license": "MIT",
   "keywords": ["tldraw", "canvas", "drawing", "diagrams", "mcp"]

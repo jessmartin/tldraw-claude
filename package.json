@@ -6,7 +6,8 @@
   "scripts": {
     "start": "./bin/tldraw-buddy start",
     "stop": "./bin/tldraw-buddy stop",
-    "status": "./bin/tldraw-buddy status"
+    "status": "./bin/tldraw-buddy status",
+    "validate": "claude plugin validate ."
   },
   "type": "module"
 }
